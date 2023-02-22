@@ -708,10 +708,19 @@ struct NegativeParam : ParamBase {
   const lite::Tensor* X{};
   lite::Tensor* Out{};
 };
+/// ----------------------- pad operators ----------------------
+struct PadParam : ParamBase {
+  const lite::Tensor* X{};
+  lite::Tensor* Out{};
+  std::vector<int> paddings{};
+  float pad_value = 0.f;
+};
+
 /// ----------------------- pad2d operators ----------------------
 struct Pad2dParam : ParamBase {
   const lite::Tensor* X{};
   lite::Tensor* Out{};
+  lite::Tensor* input_paddings = nullptr;
   std::vector<int> paddings{0, 0, 0, 0};
   std::string mode{"constant"};
   float pad_value = 0.f;
@@ -1755,6 +1764,7 @@ struct XPUMultiEncoderParam : ParamBase {
   bool norm_before{false};
   bool adaptive_seqlen{false};
   bool per_channel{false};
+  bool already_qkv_fusion{false};  // qkv is already fusion in graph
 };
 
 struct XPUEmbeddingWithEltwiseAddParam : ParamBase {
@@ -2282,6 +2292,21 @@ struct UniqueWithCountsParam : ParamBase {
   lite::Tensor* Out{};
   lite::Tensor* Index{};
   lite::Tensor* Count{};
+};
+
+/// --------------- unique operators ---------------
+struct UniqueParam : ParamBase {
+  const lite::Tensor* X{};
+  lite::Tensor* Out{};
+  lite::Tensor* Index{};    // the indices in the original input
+  lite::Tensor* Indices{};  // the indices in the result
+  lite::Tensor* Counts{};
+  int dtype{-1};
+  bool return_index{false};    // Indices
+  bool return_inverse{false};  // Index
+  bool return_counts{false};
+  std::vector<int> axis{};
+  bool is_sorted{false};
 };
 
 struct GaussRandomParam : ParamBase {

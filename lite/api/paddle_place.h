@@ -201,6 +201,11 @@ struct PrecisionTypeTrait {
 
 _ForEachPrecisionType(DefinePrecisionTypeTrait);
 
+#ifdef LITE_WITH_OPENCL
+typedef uint16_t half_t;
+_ForEachPrecisionTypeHelper(DefinePrecisionTypeTrait, half_t, kFP16);
+#endif
+
 #ifdef ENABLE_ARM_FP16
 typedef __fp16 float16_t;
 _ForEachPrecisionTypeHelper(DefinePrecisionTypeTrait, float16_t, kFP16);
@@ -277,6 +282,11 @@ struct LITE_API Place {
   friend bool operator<(const Place& a, const Place& b);
 
   std::string DebugString() const;
+};
+
+struct LITE_API CustomAllocator {
+  void* (*alloc)(size_t size, size_t alignment) = nullptr;
+  void (*free)(void* ptr) = nullptr;
 };
 
 }  // namespace lite_api
